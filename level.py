@@ -1,6 +1,8 @@
 import pygame
 import os
 
+import pygame.sprite
+
 # making elements of the game
 enemy_image = pygame.image.load('data/gomba.png')
 enemy_image = pygame.transform.scale(enemy_image, (60, 60))
@@ -23,28 +25,48 @@ for _ in names:
 # ------------------------------------
 
 
+class Element(pygame.sprite.Sprite):
+    def __init__(self, image, surface, coord):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = image
+        self.surface = surface
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = coord
+
+    def update(self):
+        self.surface.blit(self.image, self.rect)
+
+
 class Level:
     def __init__(self):
         self.level_file = levels
         self.level_number = 0
         self.mario = None
         self.surface = None
+        self.surfaces = pygame.sprite.Group()
+        self.first_render()
 
-    def render(self):
+    def first_render(self):
         level = self.level_file[self.level_number]
         self.surface = pygame.surface.Surface((60 * len(level[0]), 60 * len(level)))
         self.surface.fill((6, 6, 6))
+        self.surface.set_colorkey((6, 6, 6))
         for i in range(len(level)):
             for j in range(len(level[0])):
                 if level[i][j] == '#':
-                    self.surface.blit(block, (0 + 60 * j, 0 + 60 * i))
+                    el = Element(block, self.surface, (0 + 60 * j, 0 + 60 * i))
+                    self.surfaces.add(el)
                 elif level[i][j] == 'P':
                     self.mario = (0 + 60 * j, 0 + 60 * i)
                 elif level[i][j] == 'H':
-                    self.surface.blit(brick, (0 + 60 * j, 0 + 60 * i))
+                    el = Element(brick, self.surface, (0 + 60 * j, 0 + 60 * i))
+                    self.surfaces.add(el)
                 elif level[i][j] == '?':
-                    self.surface.blit(lucky, (0 + 60 * j, 0 + 60 * i))
-        self.surface.set_colorkey((6, 6, 6))
+                    el = Element(lucky, self.surface, (0 + 60 * j, 0 + 60 * i))
+                    self.surfaces.add(el)
+
+    def render(self):
+        self.surfaces.update()
         return self.surface
 
     def end_level(self):
