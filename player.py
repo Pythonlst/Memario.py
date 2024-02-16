@@ -1,7 +1,6 @@
 import pygame
 from entity import Entity
 
-ground_h = 120
 w, h = 1200, 900
 # making sprites for the mario
 buf = pygame.image.load('data/mario_sprite.png')
@@ -12,7 +11,7 @@ for _ in [(0, 0, 64, 85), (79, 0, 150, 85), (165, 0, 225, 85), (240, 0, 321, 85)
     cropped = pygame.Surface((_[2] - _[0], _[3] - _[1]))
     cropped.blit(buf, (0, 0), (_[0], _[1], _[2], _[3]))
     cropped.set_colorkey((0, 0, 0))
-    cropped = pygame.transform.scale(cropped, (50, 60))
+    cropped = pygame.transform.scale(cropped, (50, 50))
     frames.append(cropped)
 
 
@@ -74,7 +73,6 @@ class Player(Entity):
         if self.grounded and keys[pygame.K_w]:
             self.jump()
             self.animation(jump=True)
-        #print(self.rect)
 
     def jump(self):
         self.y_speed = self.jump_speed
@@ -83,4 +81,3 @@ class Player(Entity):
     def respawn(self):
         self.is_out = False
         self.life = True
-        self.rect.midbottom = (w // 2, h - ground_h)
