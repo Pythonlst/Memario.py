@@ -1,9 +1,13 @@
+import pygame
+from level import Level
 ground_h = 120
 w, h = 1200, 900
 
 
-class Entity:
-    def __init__(self, image, cord):
+class Entity(pygame.sprite.Sprite):
+    def __init__(self, image, cord, screen):
+        super().__init__()
+        self.surface = screen
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.x = cord[0]
@@ -25,19 +29,28 @@ class Entity:
         self.image = dead_image
         self.life = False
 
-    def update(self):
+    def update(self, list_sprites):
         self.rect.x += self.x_speed
-        self.y_speed += self.gravity
         self.rect.y += self.y_speed
-
+        if not self.grounded:
+            self.y_speed += self.gravity
         if self.life:
             self.hand_controll()
-            if self.rect.bottom >= h - ground_h:
-                self.grounded = True
-                self.rect.bottom = h - ground_h
+            if len(pygame.sprite.spritecollide(self, list_sprites, dokill=False)) > 0:
+                for i in pygame.sprite.spritecollide(self, list_sprites, dokill=False):
+                    sprite = i
+                    if sprite.rect.collidepoint(self.rect[0] + self.rect[3] // 2, self.rect.bottom):
+                        self.grounded = True
+                        self.rect.bottom = sprite.rect.top
+                    if (sprite.rect.collidepoint(self.rect[0] + self.rect[3] // 2, self.rect[2])
+                            and self.x_speed < 0):
+                        self.x_speed = 0
+
+            else:
+                self.grounded = False
         else:
             if self.rect.top > h - ground_h:
                 self.is_out = True
 
-    def draw(self, surface):
-        surface.blit(self.image, self.rect)
+    def draw(self):
+        self.surface.blit(self.image, self.rect)

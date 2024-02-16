@@ -17,11 +17,11 @@ for _ in [(0, 0, 64, 85), (79, 0, 150, 85), (165, 0, 225, 85), (240, 0, 321, 85)
 
 
 class Player(Entity):
-    def __init__(self, coord):
+    def __init__(self, coord, screen):
         self.past = False
         self.t = 0
-        self.camera = 0
-        super().__init__(frames[0], coord)
+        self.camera = [0, 0]
+        super().__init__(frames[0], coord, screen)
 
     def animation(self, inverted=None, stop=False, jump=False, seat=False):
         zam = False
@@ -55,13 +55,13 @@ class Player(Entity):
 
     def hand_controll(self):
         self.x_speed = 0
-
+        self.camera = [0, 0]
         keys = pygame.key.get_pressed()
         if keys[pygame.K_d]:
             if self.rect.bottomright[0] <= w - w // 2:
                 self.x_speed = self.speed
             else:
-                self.camera -= self.speed
+                self.camera[0] = self.camera[0] - self.speed
             self.animation(inverted=False)
         elif keys[pygame.K_a]:
             if self.rect.bottomleft[0] >= 0:
@@ -74,6 +74,7 @@ class Player(Entity):
         if self.grounded and keys[pygame.K_w]:
             self.jump()
             self.animation(jump=True)
+        #print(self.rect)
 
     def jump(self):
         self.y_speed = self.jump_speed

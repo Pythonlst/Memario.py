@@ -12,7 +12,7 @@ fps = 60
 clock = pygame.time.Clock()
 game_over = False
 
-# magic with language - not used
+# magic with language - not usedddddddddddd
 font_path = 'data/font.ttf'
 font_large = pygame.font.Font(font_path, 48)
 font_small = pygame.font.Font(font_path, 24)
@@ -20,9 +20,9 @@ retry_text = font_small.render('press any key', True, (255, 255, 255))
 retry_rect = retry_text.get_rect()
 # -------------------------------
 
-level = Level()
-level.render()
-player = Player(level.mario)
+level = Level(screen)
+level.render((0, 0))
+player = Player(level.mario, screen)
 running = True
 while running:
     for event in pygame.event.get():
@@ -30,9 +30,9 @@ while running:
             running = False
     clock.tick(fps)
     screen.fill((92, 148, 252))
-    screen.blit(level.render(), (player.camera, 0))
+    level.render(player.camera)
     if not player.is_out:
-        player.update()
-        player.draw(screen)
+        player.update(level.surfaces)
+        player.draw()
     pygame.display.flip()
 quit()

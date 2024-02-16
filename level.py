@@ -1,6 +1,5 @@
 import pygame
 import os
-
 import pygame.sprite
 
 # making elements of the game
@@ -33,24 +32,22 @@ class Element(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = coord
 
-    def update(self):
+    def update(self, coord):
+        self.rect.x += coord[0]
         self.surface.blit(self.image, self.rect)
 
 
 class Level:
-    def __init__(self):
+    def __init__(self, screen):
         self.level_file = levels
         self.level_number = 0
         self.mario = None
-        self.surface = None
+        self.surface = screen
         self.surfaces = pygame.sprite.Group()
         self.first_render()
 
     def first_render(self):
         level = self.level_file[self.level_number]
-        self.surface = pygame.surface.Surface((60 * len(level[0]), 60 * len(level)))
-        self.surface.fill((6, 6, 6))
-        self.surface.set_colorkey((6, 6, 6))
         for i in range(len(level)):
             for j in range(len(level[0])):
                 if level[i][j] == '#':
@@ -65,9 +62,8 @@ class Level:
                     el = Element(lucky, self.surface, (0 + 60 * j, 0 + 60 * i))
                     self.surfaces.add(el)
 
-    def render(self):
-        self.surfaces.update()
-        return self.surface
+    def render(self, coord):
+        self.surfaces.update(coord)
 
     def end_level(self):
         if len(self.level_file) > self.level_number + 2:
