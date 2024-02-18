@@ -12,7 +12,7 @@ fps = 60
 clock = pygame.time.Clock()
 game_over = False
 
-# magic with language - not usedddddddddddd
+# magic with language - not used
 font_path = 'data/font.ttf'
 font_large = pygame.font.Font(font_path, 48)
 font_small = pygame.font.Font(font_path, 24)
