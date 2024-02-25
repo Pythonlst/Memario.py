@@ -25,9 +25,9 @@ class Entity(pygame.sprite.Sprite):
         self.rect.y = cord[1]
         self.x_speed = 0
         self.y_speed = 0
-        self.speed = 10
+        self.speed = 5
         self.life = True
-        self.jump_speed = -20
+        self.jump_speed = -23
         self.gravity = 1
         self.grounded = False
         self.is_out = False
@@ -64,7 +64,10 @@ class Entity(pygame.sprite.Sprite):
                                             self.rect[2] // 2, self.rect[3] // 2))
         if len(pygame.sprite.spritecollide(self, list_sprites, dokill=False)) > 0:
             for i in pygame.sprite.spritecollide(self, list_sprites, dokill=False):
+
                 sprite = i
+                if xvel == 0 and pygame.sprite.spritecollide(self, list_sprites, dokill=False):
+                    self.x_speed = 1
                 if xvel > 0:
                     self.rect.right = sprite.rect.left
 
@@ -79,7 +82,7 @@ class Entity(pygame.sprite.Sprite):
                 if yvel < 0:
                     self.rect.top = sprite.rect.bottom
                     self.y_speed = 0
-        # 4 часа спустя, я переписал хитбоксы. Что за адскую Гидру ты здесь приютил ранее, Влад, зачем столько 
+        # 4 часа спустя, я переписал хитбоксы. Что за адскую Гидру ты здесь приютил ранее, Влад, зачем столько
         # сложностей?!
         if self.grounded and not pygame.sprite.spritecollide(self.detectgr, list_sprites, dokill=False):
             self.grounded = False
