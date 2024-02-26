@@ -1,6 +1,7 @@
 import pygame
 import os
 import pygame.sprite
+from goomba import Goomba
 
 # making elements of the game
 enemy_image = pygame.image.load('data/gomba.png')
@@ -15,17 +16,17 @@ brick = pygame.transform.scale(brick, (60, 60))
 lucky = pygame.image.load('data/lucky.png')
 lucky = pygame.transform.scale(lucky, (60, 60))
 
-psl = pygame.image.load('data/PipeSideL.png')
-psl = pygame.transform.scale(psl, (60, 60))
+#psl = pygame.image.load('data/PipeSideL.png')
+#psl = pygame.transform.scale(psl, (60, 60))
 
-psr = pygame.image.load('data/PipeSideR.png')
-psr = pygame.transform.scale(psr, (60, 60))
+#psr = pygame.image.load('data/PipeSideR.png')
+#psr = pygame.transform.scale(psr, (60, 60))
 
-ptr = pygame.image.load('data/PipeTopR.png')
-ptr = pygame.transform.scale(ptr, (60, 60))
+#ptr = pygame.image.load('data/PipeTopR.png')
+#ptr = pygame.transform.scale(ptr, (60, 60))
 
-ptl = pygame.image.load('data/PipeTopL.png')
-ptl = pygame.transform.scale(ptl, (60, 60))
+#ptl = pygame.image.load('data/PipeTopL.png')
+#ptl = pygame.transform.scale(ptl, (60, 60))
 
 # reading and making list with levels
 names, levels = os.listdir(path="levels/"), []
@@ -59,6 +60,7 @@ class Level:
         self.surface = screen
         self.surfaces = pygame.sprite.Group()
         self.deco = pygame.sprite.Group()
+        self.enemys = pygame.sprite.Group()
         self.first_render()
 
     def first_render(self):
@@ -76,22 +78,25 @@ class Level:
                 elif level[i][j] == '?':
                     el = Element(lucky, self.surface, (0 + 60 * j, 0 + 60 * i))
                     self.surfaces.add(el)
-                elif level[i][j] == '[':
-                    el = Element(psl, self.surface, (0 + 60 * j, 0 + 60 * i))
-                    self.surfaces.add(el)
-                elif level[i][j] == ']':
-                    el = Element(psr, self.surface, (0 + 60 * j, 0 + 60 * i))
-                    self.surfaces.add(el)
-                elif level[i][j] == '>':
-                    el = Element(ptr, self.surface, (0 + 60 * j, 0 + 60 * i))
-                    self.surfaces.add(el)
-                elif level[i][j] == '<':
-                    el = Element(ptl, self.surface, (0 + 60 * j, 0 + 60 * i))
-                    self.surfaces.add(el)
+                elif level[i][j] == 'G':
+                    self.enemys.add(Goomba((0 + 60 * j, 0 + 60 * i), self.surface))
+                #elif level[i][j] == '[':
+                #    el = Element(psl, self.surface, (0 + 60 * j, 0 + 60 * i))
+                #    self.surfaces.add(el)
+                #elif level[i][j] == ']':
+                #    el = Element(psr, self.surface, (0 + 60 * j, 0 + 60 * i))
+                #    self.surfaces.add(el)
+                #elif level[i][j] == '>':
+                #    el = Element(ptr, self.surface, (0 + 60 * j, 0 + 60 * i))
+                #    self.surfaces.add(el)
+                #elif level[i][j] == '<':
+                #    el = Element(ptl, self.surface, (0 + 60 * j, 0 + 60 * i))
+                #    self.surfaces.add(el)
 
     def render(self, coord):
         self.surfaces.update(coord)
         self.deco.update(coord)
+        self.enemys.update(self.surfaces, coord)
 
     def end_level(self):
         if len(self.level_file) > self.level_number + 2:

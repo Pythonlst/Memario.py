@@ -32,7 +32,7 @@ while running:
     screen.fill((92, 148, 252))
     level.render(player.camera)
     if not player.is_out:
-        player.update(level.surfaces)
+        player.update(level.surfaces, level.enemys)
         player.draw()
     pygame.display.flip()
 quit()

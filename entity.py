@@ -25,7 +25,7 @@ class Entity(pygame.sprite.Sprite):
         self.rect.y = cord[1]
         self.x_speed = 0
         self.y_speed = 0
-        self.speed = 5
+        self.speed = 7
         self.life = True
         self.jump_speed = -23
         self.gravity = 1
@@ -34,6 +34,8 @@ class Entity(pygame.sprite.Sprite):
         self.animation_step = 1
         self.detect = None
         self.body = None
+        self.left_detect = False
+        self.right_detect = False
 
     def hand_controll(self):
         # найс костыль, бро. Убил 2 часа жизни
@@ -44,18 +46,19 @@ class Entity(pygame.sprite.Sprite):
         self.life = False
 
     def update(self, list_sprites):
-        if not self.grounded:
-            if self.y_speed < 22:
-                self.y_speed += self.gravity
-                print(self.y_speed)
-            if self.y_speed == 22:
-                self.y_speed = 20
+        if self.life:
+            if not self.grounded:
+                if self.y_speed < 22:
+                    self.y_speed += self.gravity
+                if self.y_speed == 22:
+                    self.y_speed = 20
         # строчка внизу, оказывается, важна
-        self.hand_controll()
-        self.rect.y += self.y_speed
-        self.sprite_magic(list_sprites, 0, self.y_speed)
-        self.rect.x += self.x_speed
-        self.sprite_magic(list_sprites, self.x_speed, 0)
+            self.hand_controll()
+            self.rect.y += self.y_speed
+            self.sprite_magic(list_sprites, self.x_speed, self.y_speed)
+            self.rect.x += self.x_speed
+            self.sprite_magic(list_sprites, self.x_speed, 0)
+            self.out_of_screen()
 
     def sprite_magic(self, list_sprites, xvel, yvel):
         self.detect = Heatbox(pygame.Rect(self.rect.x, self.rect.y,
@@ -68,11 +71,18 @@ class Entity(pygame.sprite.Sprite):
                 sprite = i
                 if xvel == 0 and pygame.sprite.spritecollide(self, list_sprites, dokill=False):
                     self.x_speed = 1
+
                 if xvel > 0:
                     self.rect.right = sprite.rect.left
+                    self.left_detect = True
+                else:
+                    self.left_detect = False
 
                 if xvel < 0:
                     self.rect.left = sprite.rect.right
+                    self.right_detect = True
+                else:
+                    self.right_detect = False
 
                 if yvel > 0:
                     self.rect.bottom = sprite.rect.top
@@ -86,6 +96,11 @@ class Entity(pygame.sprite.Sprite):
         # сложностей?!
         if self.grounded and not pygame.sprite.spritecollide(self.detectgr, list_sprites, dokill=False):
             self.grounded = False
+
+    def out_of_screen(self):
+        if not (0, 0) <= self.rect.center <= self.surface.get_size() or self.rect.y > self.surface.get_size()[1]:
+            self.life = False
+            print('dead')
 
     def draw(self):
         self.surface.blit(self.image, self.rect)

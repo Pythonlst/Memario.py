@@ -3,10 +3,10 @@ from entity import Entity
 
 w, h = 1200, 900
 # making sprites for the mario
-buf = pygame.image.load('data/smb_mario_sheet.png')
+buf = pygame.image.load('data/mario_sprite.png')
 buf.set_colorkey((255, 255, 255))
 frames = []
-for _ in [(419, 0, 451, 31), (480, 0, 511, 31), (539, 0, 571, 31), (600, 0, 632, 31), (718, 0, 751, 31),
+for _ in [(0, 0, 64, 85), (79, 0, 150, 85), (165, 0, 225, 85), (240, 0, 321, 85), (256, 100, 342, 187),
           (80, 101, 154, 186)]:
     cropped = pygame.Surface((_[2] - _[0], _[3] - _[1]))
     cropped.blit(buf, (0, 0), (_[0], _[1], _[2], _[3]))
@@ -85,6 +85,12 @@ class Player(Entity):
         if self.grounded and keys[pygame.K_w]:
             self.jump(self.jump_speed)
             self.animation(jump=True)
+
+    def update(self, list_sprites, enemys):
+        super().update(list_sprites)
+        if pygame.sprite.spritecollide(self, enemys, dokill=False):
+            self.camera = (0, 0)
+            self.death(frames[0])
 
     def jump(self, js):
         self.y_speed = js
