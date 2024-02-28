@@ -31,8 +31,11 @@ while running:
     clock.tick(fps)
     screen.fill((92, 148, 252))
     level.render(player.camera)
-    if not player.is_out:
+    if player.life:
         player.update(level.surfaces, level.enemys)
         player.draw()
+    else:
+        level.respawn()
+        player.respawn(level.mario)
     pygame.display.flip()
 quit()

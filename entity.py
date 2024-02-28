@@ -63,8 +63,8 @@ class Entity(pygame.sprite.Sprite):
     def sprite_magic(self, list_sprites, xvel, yvel):
         self.detect = Heatbox(pygame.Rect(self.rect.x, self.rect.y,
                                           self.rect[2], self.rect[3]))
-        self.detectgr = Heatbox(pygame.Rect(self.rect.x + 10, self.rect.y + 70,
-                                            self.rect[2] // 2, self.rect[3] // 2))
+        self.detectgr = Heatbox(pygame.Rect(self.rect.x, self.rect.y + 70,
+                                            self.rect[2], self.rect[3] // 2))
         if len(pygame.sprite.spritecollide(self, list_sprites, dokill=False)) > 0:
             for i in pygame.sprite.spritecollide(self, list_sprites, dokill=False):
 
@@ -98,11 +98,11 @@ class Entity(pygame.sprite.Sprite):
             self.grounded = False
 
     def out_of_screen(self):
-        if not (0, 0) <= self.rect.center <= self.surface.get_size() or self.rect.y > self.surface.get_size()[1]:
+        if not (0, 0) <= self.rect.center or self.rect.y > self.surface.get_size()[1]:
             self.life = False
             print('dead')
 
     def draw(self):
         self.surface.blit(self.image, self.rect)
-#        pygame.draw.rect(self.surface, "WHITE", self.detect)
-#        pygame.draw.rect(self.surface, "WHITE", self.detectgr)
+        #pygame.draw.rect(self.surface, "WHITE", self.detect)
+        pygame.draw.rect(self.surface, "WHITE", self.detectgr)

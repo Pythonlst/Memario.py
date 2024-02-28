@@ -1,5 +1,6 @@
 import pygame
 from entity import Entity
+pygame.init()
 
 w, h = 1200, 900
 # making sprites for the mario
@@ -13,6 +14,9 @@ for _ in [(0, 0, 64, 85), (79, 0, 150, 85), (165, 0, 225, 85), (240, 0, 321, 85)
     cropped.set_colorkey((0, 0, 0))
     cropped = pygame.transform.scale(cropped, (50, 50))
     frames.append(cropped)
+# making sounds of mario
+jump_sound = pygame.mixer.Sound("ost/jump.mp3")
+death_sound = pygame.mixer.Sound("ost/death.mp3")
 
 
 class Player(Entity):
@@ -88,14 +92,26 @@ class Player(Entity):
 
     def update(self, list_sprites, enemys):
         super().update(list_sprites)
-        if pygame.sprite.spritecollide(self, enemys, dokill=False):
+        if pygame.sprite.spritecollide(self, enemys, dokill=False) and self.grounded:
             self.camera = (0, 0)
             self.death(frames[0])
+            pygame.mixer.music.stop()
+            death_sound.play()
+        elif pygame.sprite.spritecollide(self, enemys, dokill=False) and not self.grounded:
+            pygame.sprite.spritecollide(self, enemys, dokill=True)
+            self.y_speed = self.jump_speed // 2
+
+    def out_of_screen(self):
+        super().out_of_screen()
+        if not self.life:
+            death_sound.play()
 
     def jump(self, js):
+        jump_sound.play()
         self.y_speed = js
         self.grounded = False
 
-    def respawn(self):
-        self.is_out = False
+    def respawn(self, coord):
+        self.rect.x, self.rect.y = coord
+        self.camera = (0, 0)
         self.life = True

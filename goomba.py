@@ -9,8 +9,9 @@ enemy_image = pygame.transform.scale(enemy_image, (50, 50))
 class Goomba(Entity):
     def __init__(self, coord, screen):
         self.timer = 0
-        self.x_speed = -1
         super().__init__(enemy_image, coord, screen)
+        self.speed = 1
+        self.x_speed = 0
 
     def animation(self):
         if self.timer > 5:
@@ -25,8 +26,8 @@ class Goomba(Entity):
         self.draw()
 
     def hand_controll(self):
-        if self.surface.get_width() >= self.rect.x:
-            if self.right_detect:
-                self.x_speed = 1
-            if self.left_detect:
-                self.x_speed = -1
+        if self.surface.get_width() // 2 > self.rect.x:
+            if self.right_detect or self.left_detect:
+                self.speed = -self.speed
+                self.x_speed = self.speed
+                self.right_detect, self.left_detect = False, False
