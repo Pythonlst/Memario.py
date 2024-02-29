@@ -21,7 +21,7 @@ retry_rect = retry_text.get_rect()
 # -------------------------------
 
 level = Level(screen)
-level.render((0, 0))
+level.render((0, 0), None)
 player = Player(level.mario, screen)
 running = True
 while running:
@@ -30,7 +30,7 @@ while running:
             running = False
     clock.tick(fps)
     screen.fill((92, 148, 252))
-    level.render(player.camera)
+    level.render(player.camera, player)
     if player.life:
         player.update(level.surfaces, level.enemys)
         player.draw()

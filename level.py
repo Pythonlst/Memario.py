@@ -29,18 +29,22 @@ ptr = pygame.transform.scale(ptr, (60, 60))
 ptl = pygame.image.load('data/PipeTopL.png')
 ptl = pygame.transform.scale(ptl, (60, 60))
 
+castle = pygame.image.load('data/castle.png')
+castle = pygame.transform.scale(castle, (300, 300))
+
 # sound load
 
 pygame.mixer.music.load("ost/main_theme.mp3")
 
 # reading and making list with levels
 names, levels = os.listdir(path="levels/"), []
+names.sort()
 for _ in names:
     with open(f'levels/{_}') as level:
         level = level.read().split('\n')
         levels.append(level)
 
-
+print(names)
 # ------------------------------------
 
 
@@ -66,6 +70,7 @@ class Level:
         self.surfaces = pygame.sprite.Group()
         self.deco = pygame.sprite.Group()
         self.enemys = pygame.sprite.Group()
+        self.level_exits = pygame.sprite.Group()
         self.first_render()
         pygame.mixer.music.play(-1)
 
@@ -74,6 +79,7 @@ class Level:
         self.deco = pygame.sprite.Group()
         self.enemys = pygame.sprite.Group()
         self.first_render()
+        pygame.mixer.music.stop()
 
     def first_render(self):
         level = self.level_file[self.level_number]
@@ -104,12 +110,27 @@ class Level:
                 elif level[i][j] == '<':
                     el = Element(ptl, self.surface, (0 + 60 * j, 0 + 60 * i))
                     self.surfaces.add(el)
+                elif level[i][j] == '@':
+                    el = Element(castle, self.surface, (0 + 60 * j, 0 + 60 * i))
+                    self.level_exits.add(el)
 
-    def render(self, coord):
+    def render(self, coord, player):
         self.surfaces.update(coord)
         self.deco.update(coord)
         self.enemys.update(self.surfaces, coord)
+        self.level_exits.update(coord)
+        if player:
+            if pygame.sprite.spritecollide(player, self.level_exits, dokill=False):
+                self.end_level(player)
 
-    def end_level(self):
-        if len(self.level_file) > self.level_number + 2:
+    def end_level(self, player):
+        if len(levels) >= self.level_number + 2:
             self.level_number += 1
+            self.surfaces = pygame.sprite.Group()
+            self.deco = pygame.sprite.Group()
+            self.enemys = pygame.sprite.Group()
+            self.level_exits = pygame.sprite.Group()
+            self.first_render()
+            player.rect.x, player.rect.y = self.mario
+        else:
+            quit()

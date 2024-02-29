@@ -26,7 +26,7 @@ class Goomba(Entity):
         self.draw()
 
     def hand_controll(self):
-        if self.surface.get_width() // 2 > self.rect.x:
+        if self.surface.get_width() > self.rect.x:
             if self.right_detect or self.left_detect:
                 self.speed = -self.speed
                 self.x_speed = self.speed

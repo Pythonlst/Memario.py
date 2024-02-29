@@ -105,4 +105,4 @@ class Entity(pygame.sprite.Sprite):
     def draw(self):
         self.surface.blit(self.image, self.rect)
         #pygame.draw.rect(self.surface, "WHITE", self.detect)
-        pygame.draw.rect(self.surface, "WHITE", self.detectgr)
+        #pygame.draw.rect(self.surface, "WHITE", self.detectgr)
